@@ -1,3 +1,5 @@
+version: '3'
+
 volumes:
   media: null
   pg_data: null
@@ -9,21 +11,21 @@ services:
     image: postgres:13.10
     env_file: .env
     volumes:
-      - pg_data_production:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
   backend:
     image: bluewe11s/kittygram_backend
     env_file: .env
     depends_on:
       - db
     volumes:
-      - static_volume:/backend_static
+      - static:/backend_static
       - media:/app/media
   frontend:
     image: bluewe11s/kittygram_frontend  # Качаем с Docker Hub
     env_file: .env
     command: cp -r /app/build/. /frontend_static/
     volumes:
-      - static_volume:/frontend_static
+      - static:/frontend_static
   gateway:
     image: bluewe11s/kittygram_gateway  # Качаем с Docker Hub
     env_file: .env
@@ -31,7 +33,7 @@ services:
       - backend
       - frontend
     volumes:
-      - static_volume:/staticfiles/
+      - static:/staticfiles/
       - media:/media
     ports:
       - 9000:80
