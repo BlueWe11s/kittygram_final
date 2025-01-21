@@ -1,9 +1,9 @@
-# docker-compose.production.yml
 version: '3'
 
 volumes:
-  pg_data_production:
-  static_volume:
+  media: 
+  pg_data: 
+  static:
 
 # Всё отличие — заменяем build на image и указываем, какой образ использовать
 services:
@@ -15,8 +15,11 @@ services:
   backend:
     image: bluewe11s/kittygram_backend
     env_file: .env
+    depends_on:
+      - db
     volumes:
       - static_volume:/backend_static
+      - media:/app/media
   frontend:
     image: bluewe11s/kittygram_frontend  # Качаем с Docker Hub
     env_file: .env
@@ -26,7 +29,11 @@ services:
   gateway:
     image: bluewe11s/kittygram_gateway  # Качаем с Docker Hub
     env_file: .env
+    depends_on:
+      - backend
+      - frontend
     volumes:
       - static_volume:/staticfiles/
+      - media:/media
     ports:
-      - 8080:80
+      - 9000:80
